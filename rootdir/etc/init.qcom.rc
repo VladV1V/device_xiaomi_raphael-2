@@ -30,6 +30,8 @@ import /vendor/etc/init/hw/init.target.rc
 import /vendor/etc/init/hw/init.safailnet.rc
 
 on early-init
+    # Disable EAS
+    write /sys/kernel/debug/sched_features NO_ENERGY_AWARE
     mount debugfs debugfs /sys/kernel/debug
     chmod 0755 /sys/kernel/debug
     chmod 0755 /sys/kernel/debug/tracing
@@ -232,6 +234,8 @@ service vendor.ssr_setup /vendor/bin/ssr_setup
     oneshot
 
 on property:sys.boot_completed=1
+    # Enable EAS
+    write /sys/kernel/debug/sched_features ENERGY_AWARE
     chown media audio /sys/kernel/wdsp0/boot
 
     start qcom-post-boot
