@@ -11,7 +11,6 @@ type sysfs_graphics, sysfs_type, fs_type;
 
 # device info
 type sysfs_device_info, sysfs_type, fs_type;
-
 type sysfs_msm_subsys, sysfs_type, fs_type;
 type sysfs_system_sleep_stats, sysfs_type, fs_type;
 type sysfs_rpm, sysfs_type, fs_type;
@@ -20,3 +19,6 @@ type sysfs_devfreq, sysfs_type, fs_type;
 type sysfs_kgsl, sysfs_type, fs_type;
 type sysfs_scsi_devices, sysfs_type, fs_type;
 type debugfs_wlan, debugfs_type, fs_type;
+
+#FOD
+type sysfs_tp_fodstatus, sysfs_type, fs_type;
