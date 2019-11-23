@@ -48,10 +48,5 @@
    "repository" : "LineageOS/android_vendor_nxp_opensource_hidlimpl",
    "target_path": "vendor/nxp/opensource/hidlimpl",
    "branch"     : "lineage-17.0-sn100x"
- },
- {
-   "repository": "LineageOS/android_packages_resources_devicesettings",
-   "target_path": "packages/resources/devicesettings",
-   "branch": "lineage-17.0"
  }
 ]
