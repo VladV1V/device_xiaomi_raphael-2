@@ -43,9 +43,7 @@
 #include <hardware/hardware.h>
 #include <hardware/power.h>
 
-#include "performance.h"
 #include "power-common.h"
-#include "utils.h"
 
 static int display_fd;
 #define SYS_DISPLAY_PWR "/sys/kernel/hbtp/display_pwr"
@@ -94,78 +92,19 @@ int set_interactive_override(int on)
     return HINT_HANDLED;
 }
 
-const int kMaxLaunchDuration = 5000;      /* ms */
-const int kMaxInteractiveDuration = 5000; /* ms */
-const int kMinInteractiveDuration = 100;  /* ms */
-
-static int process_activity_launch_hint(void* data __unused) {
-    static int launch_handle = -1;
-    static int launch_mode = 0;
-
-    // release lock early if launch has finished
-    if (!data) {
-        if (CHECK_HANDLE(launch_handle)) {
-            release_request(launch_handle);
-            launch_handle = -1;
-        }
-        launch_mode = 0;
-        return HINT_HANDLED;
-    }
-
-    if (!launch_mode) {
-        launch_handle = perf_hint_enable_with_type(VENDOR_HINT_LAUNCH_BOOST,
-                kMaxLaunchDuration, LAUNCH_BOOST_V1);
-        if (!CHECK_HANDLE(launch_handle)) {
-            ALOGE("Failed to perform launch boost");
-            return HINT_NONE;
-        }
-        launch_mode = 1;
-    }
-
-    return HINT_HANDLED;
-}
-
-static int process_interaction_hint(void* data) {
-    static struct timespec s_previous_boost_timespec;
-    static int s_previous_duration = 0;
-
-    struct timespec cur_boost_timespec;
-    long long elapsed_time;
-    int duration = kMinInteractiveDuration;
-
-    if (data) {
-        int input_duration = *((int*)data);
-        if (input_duration > duration) {
-            duration = (input_duration > kMaxInteractiveDuration) ? kMaxInteractiveDuration
-                                                                  : input_duration;
-        }
-    }
-
-    clock_gettime(CLOCK_MONOTONIC, &cur_boost_timespec);
-
-    elapsed_time = calc_timespan_us(s_previous_boost_timespec, cur_boost_timespec);
-    // don't hint if previous hint's duration covers this hint's duration
-    if ((s_previous_duration * 1000) > (elapsed_time + duration * 1000)) {
-        return HINT_HANDLED;
-    }
-    s_previous_boost_timespec = cur_boost_timespec;
-    s_previous_duration = duration;
-
-    perf_hint_enable_with_type(VENDOR_HINT_SCROLL_BOOST, duration, SCROLL_VERTICAL);
-
-    return HINT_HANDLED;
-}
+void interaction(int duration, int num_args, int opt_list[]);
 
 int power_hint_override(power_hint_t hint, void *data)
 {
     int ret_val = HINT_NONE;
-    switch (hint) {
+    switch(hint) {
         case POWER_HINT_INTERACTION:
-            ret_val = process_interaction_hint(data);
-            break;
-        case POWER_HINT_LAUNCH:
-            ret_val = process_activity_launch_hint(data);
-            break;
+        {
+            int resources[] = {0x40800100, 0x514};
+            int duration = 100;
+            interaction(duration, sizeof(resources)/sizeof(resources[0]), resources);
+            ret_val = HINT_HANDLED;
+        }
         default:
             break;
     }
