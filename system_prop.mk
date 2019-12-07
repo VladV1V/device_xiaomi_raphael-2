@@ -126,6 +126,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.qti.sys.fw.bservice_enable=true
 
+# system prop for NFC DT
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.nfc.port=I2C
+
 # RIL
 PRODUCT_PROPERTY_OVERRIDES += \
     DEVICE_PROVISIONED=1 \
