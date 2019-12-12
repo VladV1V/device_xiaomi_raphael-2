@@ -172,3 +172,6 @@ PRODUCT_COPY_FILES += \
 PRODUCT_BOOT_JARS += \
     QPerformance \
     UxPerformance
+
+# setup dalvik vm configs
+$(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
