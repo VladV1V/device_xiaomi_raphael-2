@@ -85,6 +85,13 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.overlay.izat.optin=rro
 
+# Haptic feedback
+PRODUCT_PROPERTY_OVERRIDES += \
+    sys.haptic.down.weak=20 \
+    sys.haptic.down.normal=40 \
+    sys.haptic.down.strong=80 \
+    sys.haptic.runin=13
+
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     media.stagefright.enable-player=true \
