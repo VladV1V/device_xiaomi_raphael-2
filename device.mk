@@ -175,3 +175,7 @@ PRODUCT_COPY_FILES += \
 
 # setup dalvik vm configs
 $(call inherit-product, frameworks/native/build/phone-xhdpi-6144-dalvik-heap.mk)
+
+# Updater
+PRODUCT_PACKAGES += \
+    Updater
