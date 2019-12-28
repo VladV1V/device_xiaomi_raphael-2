@@ -85,17 +85,6 @@ PRODUCT_PROPERTY_OVERRIDES += \
 PRODUCT_PROPERTY_OVERRIDES += \
     persist.vendor.overlay.izat.optin=rro
 
-# Perf
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.vendor.at_library=true \
-    vendor.iop.enable_uxe=1 \
-    vendor.perf.iop_v3.enable=true \
-    vendor.perf.iop_v3.enable.debug=false \
-    vendor.enable.prefetch=false \
-    vendor.iop.enable_prefetch_ofr=false \
-    vendor.perf.gestureflingboost.enable=true \
-    vendor.perf.workloadclassifier.enable=true
-
 # Media
 PRODUCT_PROPERTY_OVERRIDES += \
     media.stagefright.enable-player=true \
