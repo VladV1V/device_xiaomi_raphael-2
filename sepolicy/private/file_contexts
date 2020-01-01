@@ -17,7 +17,7 @@
 /system/bin/hw/android\.hardware\.power@1\.3-service\.raphael-libperfmgr                                     u:object_r:libperfmgr_exec:s0
 /system/bin/hw/lineage\.biometrics\.fingerprint\.inscreen@1.0-service\.raphael    u:object_r:hal_fod_raphael_exec:s0
 /(product|system/product)/vendor_overlay/[0-9]+/bin/init\.qcom\.post_boot\.sh   u:object_r:qti_init_shell_exec:s0
-
+/(product|system/product)/vendor_overlay/[0-9]+/bin/init\.qcom\.usb\.sh   u:object_r:qti_init_shell_exec:s0
 # Vendor overlay
 /(product|system/product)/vendor_overlay/[0-9]+/etc(/.*)?      u:object_r:vendor_configs_file:s0
 /(product|system/product)/vendor_overlay/[0-9]+/etc/wifi(/.*)?      u:object_r:vendor_configs_file:s0
