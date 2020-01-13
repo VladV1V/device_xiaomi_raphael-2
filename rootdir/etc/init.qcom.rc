@@ -5,6 +5,12 @@ on early-init
 
 on init
 
+    # Disable UFS powersaving
+    write /sys/devices/platform/soc/1d84000.ufshc/clkscale_enable 0
+    write /sys/devices/platform/soc/1d84000.ufshc/clkgate_enable 0
+    write /sys/devices/platform/soc/1d84000.ufshc/hibern8_on_idle_enable 0
+    write /sys/module/lpm_levels/parameters/sleep_disabled Y
+
     # set default schedTune value for foreground/top-app
     # Set default values for foreground and top-app stune
     write /dev/stune/foreground/schedtune.prefer_idle 1
@@ -18,9 +24,6 @@ on boot
     write /sys/class/thermal/thermal_message/sconfig 10
 
 on property:vendor.post_boot.parsed=1
-
-    # Enable powersaving
-    write /sys/module/lpm_levels/parameters/sleep_disabled 0
 
     # Enable idle state listener
     write /sys/class/drm/card0/device/idle_encoder_mask 1

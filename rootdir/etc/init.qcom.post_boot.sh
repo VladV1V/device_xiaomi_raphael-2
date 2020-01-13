@@ -90,7 +90,7 @@ function configure_memory_parameters() {
     # Enable adaptive LMK for all targets &
     # use Google default LMK series for all 64-bit targets >=2GB.
     echo 1 > /sys/module/lowmemorykiller/parameters/enable_adaptive_lmk
-    echo 1 > /sys/module/lowmemorykiller/parameters/oom_reaper
+    echo 0 > /sys/module/lowmemorykiller/parameters/oom_reaper
 
     # Set allocstall_threshold to 0 for all targets.
     # Set swappiness to 100 for all targets
@@ -123,6 +123,16 @@ case "$target" in
     echo 100 > /dev/blkio/background/blkio.weight
     echo 2000 > /dev/blkio/blkio.group_idle
     echo 0 > /dev/blkio/background/blkio.group_idle
+
+    # Enable UFS powersaving
+    echo 1 > /sys/devices/platform/soc/1d84000.ufshc/clkscale_enable 1
+    echo 1 > /sys/devices/platform/soc/1d84000.ufshc/clkgate_enable 1
+    echo 1 > /sys/devices/platform/soc/1d84000.ufshc/hibern8_on_idle_enable 1
+    echo N > /sys/module/lpm_levels/parameters/sleep_disabled N
+
+    # Block layer tuning: discard chunk size up to 128MB
+    # Otherwise, contiguous discards can be merged
+    echo 134217728 > /sys/block/sda/queue/discard_max_bytes 134217728
 
     # Set min cpu freq
     echo 576000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
