@@ -25,6 +25,13 @@
     <!-- Doze: does this device support STATE_DOZE?  -->
     <bool name="doze_display_state_supported">true</bool>
 
+    <!-- Burn in protection -->
+    <bool name="config_statusBarBurnInProtection">true</bool>
+    <integer name="config_shift_interval">60</integer>
+
     <!-- Whether the binned brightness sensor reports a value of 0 on proximity near events -->
     <bool name="doze_brightness_sensor_reports_proximity" translatable="false">false</bool>
+
+    <integer name="config_maxVisibleNotificationIcons">7</integer>
+    <integer name="config_maxVisibleNotificationIconsWhenDark">8</integer>
 </resources>
