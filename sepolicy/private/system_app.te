@@ -1,2 +1,7 @@
 #Device info	
 allow system_app sysfs_device_info:file r_file_perms;
+
+#misc
+allow system_app vendor_default_prop:file { getattr open read };
+allow system_app fs_bpf:dir search;
+allow system_app vendor_default_prop:file {map};

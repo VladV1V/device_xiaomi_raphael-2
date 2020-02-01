@@ -23,3 +23,8 @@ type debugfs_sched_features, debugfs_type, fs_type;
 
 #FOD
 type sysfs_tp_fodstatus, sysfs_type, fs_type;
+type sysfs_tp_fod_hbm, sysfs_type, fs_type;
+
+#LED
+type sysfs_led, sysfs_type, fs_type;
+type sysfs_white_led, sysfs_type, fs_type;
