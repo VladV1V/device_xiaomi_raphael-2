@@ -29,11 +29,6 @@
 
 target=`getprop ro.board.platform`
 
-function configure_zram_parameters() {
-    mkswap /dev/block/zram0
-    swapon /dev/block/zram0 -p 32758
-}
-
 function configure_read_ahead_kb_values() {
     echo 512 > /sys/block/sda/bdi/read_ahead_kb
 }
@@ -45,18 +40,34 @@ function configure_memory_parameters() {
     # All targets will use vmpressure range 50-70,
     # All targets will use 512 pages swap size.
     #
+    # Set Low memory killer minfree parameters
+    # 64 bit will use Google default LMK series.
+    #
+    # Set ALMK parameters (usually above the highest minfree values)
+    # vmpressure_file_min threshold is always set slightly higher
+    # than LMK minfree's last bin value for all targets. It is calculated as
+    # vmpressure_file_min = (last bin - second last bin ) + last bin
+    #
+    # Set allocstall_threshold to 0 for all targets.
+    #
 
     # Set Zram disk size=1GB for >=2GB Non-Go targets.
     echo 536870912 > /sys/block/zram0/disksize
+	echo lz4 > /sys/block/zram0/comp_algorithm
     mkswap /dev/block/zram0
-    swapon /dev/block/zram0 -p 32758
+    swapon -d -p 32758 /dev/block/zram0
 
     # Set allocstall_threshold to 0 for all targets.
     # Set swappiness to 100 for all targets
     echo 0 > /sys/module/vmpressure/parameters/allocstall_threshold
     echo 100 > /proc/sys/vm/swappiness
+	
+	# Setup Writeback
+	echo 10 > /proc/sys/vm/dirty_background_ratio
+    echo 3000 > /proc/sys/vm/dirty_expire_centisecs
+    echo 32768 > /proc/sys/vm/min_free_kbytes
+	
 
-    configure_zram_parameters
     configure_read_ahead_kb_values
 }
 
@@ -199,6 +210,8 @@ case "$target" in
 
     # Setup readahead
     find /sys/devices -name read_ahead_kb | while read node; do echo 128 > $node; done
+
+    configure_memory_parameters
     ;;
 esac
 
