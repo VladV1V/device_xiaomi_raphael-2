@@ -52,8 +52,8 @@ function configure_memory_parameters() {
     #
 
     # Set Zram disk size=1GB for >=2GB Non-Go targets.
-    echo 536870912 > /sys/block/zram0/disksize
-	echo lz4 > /sys/block/zram0/comp_algorithm
+    echo 1073741824 > /sys/block/zram0/disksize
+    echo lz4 > /sys/block/zram0/comp_algorithm
     mkswap /dev/block/zram0
     swapon -d -p 32758 /dev/block/zram0
 
@@ -61,12 +61,11 @@ function configure_memory_parameters() {
     # Set swappiness to 100 for all targets
     echo 0 > /sys/module/vmpressure/parameters/allocstall_threshold
     echo 100 > /proc/sys/vm/swappiness
-	
-	# Setup Writeback
-	echo 10 > /proc/sys/vm/dirty_background_ratio
+
+    # Setup Writeback
+    echo 10 > /proc/sys/vm/dirty_background_ratio
     echo 3000 > /proc/sys/vm/dirty_expire_centisecs
     echo 32768 > /proc/sys/vm/min_free_kbytes
-	
 
     configure_read_ahead_kb_values
 }
