@@ -10,7 +10,6 @@ $(call inherit-product, device/xiaomi/raphael/device.mk)
 $(call inherit-product, vendor/syberia/common.mk)
 
 TARGET_BOOT_ANIMATION_RES := 1080
-TARGET_SUPPORTS_GOOGLE_RECORDER := false
 
 # Device identifier. This must come after all inclusions.
 PRODUCT_BRAND := Xiaomi
@@ -23,6 +22,3 @@ SYBERIA_BUILD_TYPE := OFFICIAL
 BUILD_FINGERPRINT := "Xiaomi/raphaelin/raphaelin:9/PKQ1.181121.001/V10.3.3.0.PFKINXM:user/release-keys"
 
 PRODUCT_GMS_CLIENTID_BASE := android-xiaomi
-
-# Inherit from custom vendor
-$(call inherit-product, vendor/MiuiCamera/config.mk)

@@ -48,10 +48,5 @@
    "repository": "LineageOS/android_packages_resources_devicesettings",
    "target_path": "packages/resources/devicesettings",
    "branch": "lineage-17.1"
- },
- {
-   "repository": "PixelExperience-Devices/vendor_MiuiCamera",
-   "target_path": "vendor/MiuiCamera",
-   "branch": "ten-anx-raphael"
  }
 ]
