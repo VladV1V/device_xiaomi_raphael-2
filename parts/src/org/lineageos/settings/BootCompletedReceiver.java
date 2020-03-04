@@ -20,11 +20,13 @@ package org.lineageos.settings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.UserHandle;
 import android.util.Log;
 
 import org.lineageos.settings.dirac.DiracUtils;
 import org.lineageos.settings.doze.DozeUtils;
 import org.lineageos.settings.popupcamera.PopupCameraUtils;
+import org.lineageos.settings.fod.FodScreenOffService;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
 
@@ -39,5 +41,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         }
         new DiracUtils(context).onBootCompleted();
         PopupCameraUtils.startService(context);
+        context.startServiceAsUser(new Intent(context, FodScreenOffService.class),
+                UserHandle.CURRENT);
     }
 }
