@@ -126,6 +126,9 @@ TARGET_PROVIDES_KEYMASTER := true
 # Lights
 TARGET_PROVIDES_LIBLIGHT := true
 
+# Enable stats logging in LMKD
+TARGET_LMKD_STATS_LOG := true
+
 # Media
 TARGET_PROVIDES_LIBPLATFORMCONFIG := true
 
