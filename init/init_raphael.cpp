@@ -59,4 +59,5 @@ void vendor_load_properties()
     property_override("ro.build.description", "raphael-user 10 QKQ1.190825.002 V11.0.5.0.QFKEUXM release-keys");
     property_override_dual("ro.build.fingerprint", "ro.vendor.build.fingerprint", "google/coral/coral:10/QQ2A.200305.003/6156912:user/release-keys");
     property_override("ro.apex.updatable", "true");
+    property_override("ro.oem_unlock_supported", "0");
 }
