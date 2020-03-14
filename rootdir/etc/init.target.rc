@@ -148,7 +148,6 @@ on charger
     # Enable EAS
     write /sys/kernel/debug/sched_features ENERGY_AWARE
 
-    load_system_props
     wait /dev/block/bootdevice/by-name/system
     mount ext4 /dev/block/bootdevice/by-name/system / ro barrier=1
 
