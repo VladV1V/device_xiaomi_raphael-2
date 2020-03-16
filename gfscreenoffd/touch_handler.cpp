@@ -11,13 +11,24 @@
 #include <poll.h>
 #include <unistd.h>
 
-#include <chrono>
-
 namespace vendor {
 namespace chaldeastudio {
 namespace gfscreenoffd {
 
-static std::string FindTouchEv() {
+void Send(int fd, int type, int code, int value) {
+    struct input_event ev {};
+
+    memset(&ev, 0, sizeof(ev));
+    ev.type = type;
+    ev.code = code;
+    ev.value = value;
+
+    if (write(fd, &ev, sizeof(ev)) < 0) {
+        LOG(ERROR) << "Failed to write input " << ev.code;
+    }
+}
+
+std::string FindTouchEv() {
     DIR* evd;
     int fd, eventTotal = 0;
     unsigned long evbit;
@@ -43,7 +54,17 @@ static std::string FindTouchEv() {
     return {};
 }
 
-static int UnblockFodStatus() {
+void SendResetState(const int duration) {
+    int fodTest = 0;
+    int fd = open(fodTestPath, O_WRONLY);
+
+    usleep(1000 * duration);
+    write(fd, &fodTest, sizeof(fodTest));
+
+    close(fd);
+}
+
+int UnblockFodStatus() {
     int fd, ret, status;
 
     fd = open(fodStatusPath, O_RDWR | O_NONBLOCK);
@@ -64,65 +85,28 @@ out:
     return ret;
 }
 
-TouchHandler::TouchHandler(const int& fd) {
-    mAreaPressed = 0;
-    mLastTouch = std::chrono::high_resolution_clock::now();
-    mTouchEventPath = FindTouchEv();
-    mVirtualInput = fd;
-}
-
-void TouchHandler::sendEvent(int fd, int type, int code, int value) {
-    struct input_event ev {};
-
-    memset(&ev, 0, sizeof(ev));
-    ev.type = type;
-    ev.code = code;
-    ev.value = value;
-
-    if (write(fd, &ev, sizeof(ev)) < 0) {
-        LOG(ERROR) << "Failed to write input " << ev.code;
-    }
-}
-
-void TouchHandler::releasePendingTouch(const int duration) {
-    int fodTest = 0;
-    int fd = open(fodTestPath, O_WRONLY);
-
-    usleep(1000 * duration);
-    write(fd, &fodTest, sizeof(fodTest));
-
-    close(fd);
-}
-
-void TouchHandler::startListener() {
-    double delta;
+void Listen(const std::string& eventPath, const ListenerCallback& callback) {
+    int fdTouch, fdBlank, ret;
+    pollfd pfdTouch, pfdBlank;
     input_event ev;
-    int fdTouch, fdBlank, ret = 0;
-    pollfd pfds[2];
-    std::chrono::time_point<std::chrono::high_resolution_clock> now;
 
-    if (mTouchEventPath.empty()) {
-        LOG(ERROR) << "No touchscreen detected, exiting.";
-        return;
-    }
-
-    fdTouch = open(mTouchEventPath.c_str(), O_RDONLY | O_NONBLOCK);
-    pfds[0].fd = fdTouch;
-    pfds[0].events = POLLIN;
-    pfds[0].revents = 0;
+    fdTouch = open(eventPath.c_str(), O_RDONLY | O_NONBLOCK);
+    pfdTouch.fd = fdTouch;
+    pfdTouch.events = POLLIN;
+    pfdTouch.revents = 0;
 
     fdBlank = open(fblankPath, O_RDONLY | O_NONBLOCK);
-    pfds[1].fd = fdBlank;
-    pfds[1].events = POLLIN;
-    pfds[1].revents = 0;
+    pfdBlank.fd = fdBlank;
+    pfdBlank.events = POLLIN;
+    pfdBlank.revents = 0;
 
-    LOG(INFO) << "Listening touchscreen";
     while (true) {
-        poll(pfds, 2, -1);
+        usleep(10000);
 
         // wait for screen off
-        if (pfds[1].revents & POLLIN) {
-            if (read(pfds[1].fd, &ret, sizeof(ret)) < 0) {
+        poll(&pfdBlank, 1, -1);
+        if (pfdBlank.revents & POLLIN) {
+            if (read(pfdBlank.fd, &ret, sizeof(ret)) < 0) {
                 LOG(ERROR) << "Unable to read blank state, exiting.";
                 goto out;
             }
@@ -139,24 +123,13 @@ void TouchHandler::startListener() {
             goto out;
         }
 
-        if (pfds[0].revents & POLLIN) {
-            if (read(pfds[0].fd, &ev, sizeof(ev)) != sizeof(ev)) {
+        poll(&pfdTouch, 1, -1);
+        if (pfdTouch.revents & POLLIN) {
+            if (read(pfdTouch.fd, &ev, sizeof(ev)) != sizeof(ev)) {
                 LOG(ERROR) << "Invalid event size, exiting.";
                 goto out;
             }
-
-            if (ev.code == KEY_FOD_SCRNOFF_DOWN && ev.value == 1) {
-                now = std::chrono::high_resolution_clock::now();
-                delta = std::chrono::duration<double, std::milli>(now - mLastTouch).count();
-                if (mAreaPressed < 1 || delta > ((TOUCH_RESET_DELAY_MS / 2) * 3)) {
-                    sendEvent(mVirtualInput, EV_KEY, KEY_FOD_GESTURE_DOWN, 1);
-                    sendEvent(mVirtualInput, EV_KEY, KEY_FOD_GESTURE_DOWN, 0);
-                    sendEvent(mVirtualInput, EV_SYN, SYN_REPORT, 0);
-                    mAreaPressed++;
-                    mLastTouch = std::chrono::high_resolution_clock::now();
-                    releasePendingTouch(TOUCH_RESET_DELAY_MS);
-                }
-            }
+            callback(ev);
         }
     }
 
