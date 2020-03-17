@@ -31,7 +31,8 @@ $(call inherit-product-if-exists, vendor/xiaomi/raphael/raphael-vendor.mk)
 
 # Soong namespaces
 PRODUCT_SOONG_NAMESPACES += \
-    $(LOCAL_PATH)
+    $(LOCAL_PATH) \
+    hardware/google/pixel
 
 # Hardware
 PRODUCT_COPY_FILES += \
@@ -329,6 +330,13 @@ PRODUCT_PACKAGES += \
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/power-libperfmgr/powerhint.json:$(TARGET_COPY_OUT_VENDOR)/etc/powerhint.json \
+
+# powerstats HAL
+PRODUCT_PACKAGES += \
+    android.hardware.power.stats@1.0-service.pixel
+
+PRODUCT_PACKAGES_DEBUG += \
+    pwrstats_util
 
 # NN
 PRODUCT_PACKAGES += \
