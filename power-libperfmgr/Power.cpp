@@ -52,7 +52,7 @@ constexpr char kPowerHalInitProp[] = "vendor.powerhal.init";
 constexpr char kPowerHalRenderingProp[] = "vendor.powerhal.rendering";
 constexpr char kPowerHalConfigPath[] = "/vendor/etc/powerhint.json";
 
-constexpr char kWakeupEventNode[] = "/dev/input/event4";
+constexpr char kWakeupEventNode[] = "/dev/input/event3";
 constexpr int kWakeupModeOff = 4;
 constexpr int kWakeupModeOn = 5;
 
