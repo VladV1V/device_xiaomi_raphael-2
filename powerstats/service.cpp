@@ -136,59 +136,6 @@ int main(int /* argc */, char** /* argv */) {
             new WlanStateResidencyDataProvider(wlanId, "/sys/kernel/wlan/power_stats");
     service->addStateResidencyDataProvider(wlanSdp);
 
-    // Add Airbrush power entity
-    StateResidencyConfig airStateConfig = {
-        .entryCountSupported = true,
-        .entryCountPrefix = "Cumulative count:",
-        .totalTimeSupported = true,
-        .totalTimePrefix = "Cumulative duration msec:",
-        .lastEntrySupported = true,
-        .lastEntryPrefix = "Last entry timestamp msec:",
-    };
-    std::vector<std::pair<std::string, std::string>> airStateHeaders = {
-        std::make_pair("Active", "ACTIVE"),
-        std::make_pair("Sleep", "SLEEP"),
-        std::make_pair("Deep-Sleep", "DEEP SLEEP"),
-        std::make_pair("Suspend", "SUSPEND"),
-        std::make_pair("Off", "OFF"),
-        std::make_pair("Unknown", "UNKNOWN"),
-    };
-
-    sp<GenericStateResidencyDataProvider> airSdp =
-            new GenericStateResidencyDataProvider(
-                    "/sys/devices/platform/soc/soc:abc-sm/state_stats");
-
-    uint32_t airId = service->addPowerEntity("Visual-Core", PowerEntityType::SUBSYSTEM);
-    airSdp->addEntity(airId, PowerEntityConfig("Pixel Visual Core Subsystem Power Stats",
-            generateGenericStateResidencyConfigs(airStateConfig, airStateHeaders)));
-
-    service->addStateResidencyDataProvider(airSdp);
-
-    // Add NFC power entity
-    StateResidencyConfig nfcStateConfig = {
-        .entryCountSupported = true,
-        .entryCountPrefix = "Cumulative count:",
-        .totalTimeSupported = true,
-        .totalTimePrefix = "Cumulative duration msec:",
-        .lastEntrySupported = true,
-        .lastEntryPrefix = "Last entry timestamp msec:"
-    };
-    std::vector<std::pair<std::string, std::string>> nfcStateHeaders = {
-        std::make_pair("Idle", "Idle mode:"),
-        std::make_pair("Active", "Active mode:"),
-        std::make_pair("Active-RW", "Active Reader/Writer mode:"),
-    };
-
-    sp<GenericStateResidencyDataProvider> nfcSdp =
-            new GenericStateResidencyDataProvider(
-                    "/sys/devices/platform/soc/a84000.i2c/i2c-2/2-0008/power_stats");
-
-    uint32_t nfcId = service->addPowerEntity("NFC", PowerEntityType::SUBSYSTEM);
-    nfcSdp->addEntity(nfcId,
-        PowerEntityConfig(generateGenericStateResidencyConfigs(nfcStateConfig, nfcStateHeaders)));
-
-    service->addStateResidencyDataProvider(nfcSdp);
-
     // Add GPU power entity
     uint32_t gpuId = service->addPowerEntity("GPU", PowerEntityType::SUBSYSTEM);
     sp<GpuStateResidencyDataProvider> gpuSdp = new GpuStateResidencyDataProvider(gpuId);
