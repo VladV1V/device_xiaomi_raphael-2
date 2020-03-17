@@ -331,10 +331,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     PixelLiveWallpaperPrebuilt
 
-# Power
-PRODUCT_PACKAGES += \
-    android.hardware.power@1.2-service.xiaomi_msmnile
-
 # Preopt SystemUI
 PRODUCT_DEXPREOPT_SPEED_APPS += \
     SystemUI
