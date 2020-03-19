@@ -476,3 +476,7 @@ PRODUCT_PACKAGES += \
 # Updater
 PRODUCT_PACKAGES += \
     Updater
+
+# QTI common
+-include vendor/qcom/common/av/qti-av.mk
+-include vendor/qcom/common/perf/qti-perf.mk
