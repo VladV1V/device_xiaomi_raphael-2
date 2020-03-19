@@ -120,20 +120,34 @@ case "$target" in
     # plus misfit tasks on silver cores) to trigger assitance from gold+.
     echo 1 > /sys/devices/system/cpu/cpu7/core_ctl/nr_prev_assist_thresh
 
-    # Disable Core control on silver
+    # Disable Core control
     echo 0 > /sys/devices/system/cpu/cpu0/core_ctl/enable
+    echo 0 > /sys/devices/system/cpu/cpu4/core_ctl/enable
+    echo 0 > /sys/devices/system/cpu/cpu7/core_ctl/enable
+
+    # Disable sched_boost during CONSERVATIVE_BOOST
+    echo 0 > /dev/stune/foreground/schedtune.sched_boost_no_override
+    echo 0 > /dev/stune/top-app/schedtune.sched_boost_no_override
 
     # Setting b.L scheduler parameters
     echo 95 95 > /proc/sys/kernel/sched_upmigrate
     echo 85 85 > /proc/sys/kernel/sched_downmigrate
     echo 100 > /proc/sys/kernel/sched_group_upmigrate
     echo 10 > /proc/sys/kernel/sched_group_downmigrate
-    echo 1 > /proc/sys/kernel/sched_walt_rotate_big_tasks
+    echo 0 > /proc/sys/kernel/sched_walt_rotate_big_tasks
 
     # cpuset parameters
     echo 0-1 > /dev/cpuset/background/cpus
     echo 0-2 > /dev/cpuset/system-background/cpus
     echo 0-3 > /dev/cpuset/restricted/cpus
+
+    # Dynamic Stune Boost during sched_boost
+    echo 15 > /dev/stune/top-app/schedtune.sched_boost
+
+    # Set min cpu freq
+    echo 576000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+    echo 710400 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq
+    echo 825600 > /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq
 
     # Setup final blkio
     # value for group_idle is us
@@ -148,7 +162,7 @@ case "$target" in
     echo 0 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/down_rate_limit_us
     echo 1209600 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/hispeed_freq
     echo 576000 > /sys/devices/system/cpu/cpufreq/policy0/scaling_min_freq
-    echo 1 > /sys/devices/system/cpu/cpufreq/policy0/schedutil/pl
+    echo 1 > /sys/devices/system/cpu/cpufreq/policy0/sched
 
     # Configure governor settings for gold cluster
     echo "schedutil" > /sys/devices/system/cpu/cpufreq/policy4/scaling_governor
@@ -165,8 +179,10 @@ case "$target" in
     echo 1 > /sys/devices/system/cpu/cpufreq/policy7/schedutil/pl
 
     # Configure input boost settings
-    echo "0:1324800" > /sys/module/cpu_boost/parameters/input_boost_freq
-    echo 120 > /sys/module/cpu_boost/parameters/input_boost_ms
+    echo "0:1382400" > /sys/module/cpu_boost/parameters/input_boost_freq
+    echo 500 > /sys/module/cpu_boost/parameters/input_boost_ms
+    echo 15 > /sys/module/cpu_boost/parameters/dynamic_stune_boost
+    echo 1500 > /sys/module/cpu_boost/parameters/dynamic_stune_boost_ms
 
     # Disable wsf, beacause we are using efk.
     # wsf Range : 1..1000 So set to bare minimum value 1.
